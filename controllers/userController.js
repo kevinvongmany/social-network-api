@@ -1,29 +1,6 @@
 const { ObjectId } = require('mongoose').Types;
 const { User, Thought } = require('../models');
 
-// Aggregate function to get the number of users overall
-const headCount = async () => {
-  const numberOfUsers = await User.aggregate()
-    .count('userCount');
-  return numberOfUsers;
-}
-
-// Aggregate function for getting the overall grade using $avg
-const grade = async (userId) =>
-  User.aggregate([
-    // only include the given user by using $match
-    { $match: { _id: new ObjectId(userId) } },
-    {
-      $unwind: '$friends',
-    },
-    {
-      $group: {
-        _id: new ObjectId(userId),
-        overallGrade: { $avg: '$friends.score' },
-      },
-    },
-  ]);
-
 module.exports = {
   // Get all users
   async getUsers(req, res) {
@@ -32,7 +9,6 @@ module.exports = {
 
       const userObj = {
         users,
-        headCount: await headCount(),
       };
 
       res.json(userObj);
@@ -52,8 +28,7 @@ module.exports = {
       }
 
       res.json({
-        user,
-        grade: await grade(req.params.userId),
+        user
       });
     } catch (err) {
       console.log(err);
@@ -69,24 +44,37 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  // Delete a user and remove them from the course
+  async updateUser(req, res) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $set: req.body },
+        { runValidators: true, new: true }
+      );
+      res.json(user);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
+  },
+  // Delete a user and remove them from the thoughts they are associated with
   async deleteUser(req, res) {
     try {
-      const user = await User.findOneAndRemove({ _id: req.params.userId });
+      const user = await User.findOneAndDelete({ _id: req.params.userId });
 
       if (!user) {
         return res.status(404).json({ message: 'No such user exists' });
       }
 
-      const course = await Thought.findOneAndUpdate(
+      const thought = await Thought.findOneAndUpdate(
         { users: req.params.userId },
         { $pull: { users: req.params.userId } },
         { new: true }
       );
 
-      if (!course) {
+      if (!thought) {
         return res.status(404).json({
-          message: 'User deleted, but no courses found',
+          message: 'User deleted, but no thoughts found',
         });
       }
 
