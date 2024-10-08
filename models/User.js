@@ -36,6 +36,7 @@ const userSchema = new Schema(
     friendCount: {
       virtuals: true,
     },
+    id: false,
   }
 );
 
