@@ -8,11 +8,10 @@ A link to the video can be found here: https://youtu.be/1D6in3aGds8
 - [Usage](#usage)
 - [License](#license)
 - [Contribution](#contribution)
-- [Tests](#tests)
 - [Questions](#questions)
 
 ## Installation
-# clone the repository;git clone https://github.com/kevinvongmany/social-network-api.git;# change local directory;cd social-network-api;# install dependencies;npm i
+Follow these instructions to get started with installing this application:
 
 ```shell
 # clone the repository
@@ -20,7 +19,7 @@ git clone https://github.com/kevinvongmany/social-network-api.git
 # change local directory
 cd social-network-api
 # install dependencies
-npm i
+npm install
 ```
   
 
@@ -28,9 +27,9 @@ npm i
 Run the application using npm, yarn, bun or any other npm alternative
 
 ```shell
-bun install
+bun run start
 # or
-npm install
+npm run start
 ```
   
 
@@ -41,9 +40,6 @@ This project is licensed under the [MIT](https://opensource.org/licenses/MIT) li
 
 ## Contribution
 Fork this repo and push out a submission as a pull request!
-
-## Tests
-
 
 ## Questions
 
